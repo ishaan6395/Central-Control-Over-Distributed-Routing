@@ -5,10 +5,10 @@ import java.io.*;
 public class server extends Thread{
 
 	static Topology t;
-	static HashSet<String> sources;
+	static ArrayList<String> sources;
 	public static void main(String args[]){
 		t = new Topology();
-		sources = new HashSet<>();
+		sources = new ArrayList<>();
 		try{
 			File f = new File("topology.txt");
 	                FileReader fr = new FileReader(f);
@@ -21,32 +21,33 @@ public class server extends Thread{
 				String destination = content[1];
 				double cost = Double.parseDouble(content[2]);
 				TopologyRow row = new TopologyRow(source, destination, cost);
-					
+				
 				t.addRow(row);
-				sources.add(source);
+				if(!sources.contains(source))
+					sources.add(source);
 				line = br.readLine();
-
+				
 			}
+			listener l = new listener();
+			l.start();
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 		}		
 	}
 
-	static class sender extends Thread{
 	
-
-	}
 
 	static class listener extends Thread{
 	
 		public void run(){
 			
 			try{
+				DatagramSocket send_socket = new DatagramSocket();
 				DatagramSocket ds = new DatagramSocket(8585);
 			
 				while(true){
 				
-
+					// Receive packets
 					byte[] b = new byte[1024];
 	                        	DatagramPacket dp = new DatagramPacket(b, b.length);
 					ds.receive(dp);
@@ -63,10 +64,18 @@ public class server extends Thread{
 
 						}
 					}
+					t.setTopology(rows);
+					// BroadCast Topology
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					ObjectOutputStream os = new ObjectOutputStream(outputStream);
+					os.writeObject(t);
+					os.flush();
+					byte[] buf = outputStream.toByteArray();
 
-					// Send it to all the available destinations
-
-						
+					for(String s:sources){
+						DatagramPacket dp_send = new DatagramPacket(buf, buf.length, InetAddress.getByName(s), 8585);
+						send_socket.send(dp_send);	
+					}	
 				}
 
 			}catch(Exception e){
