@@ -4,19 +4,41 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.*;
+import java.util.*;
 import java.util.PriorityQueue;
 class Graph {
 	
-	private final Map<String, List<Vertex>> vertices;
+	private final HashMap<String, List<Vertex>> vertices;
 	
 	public Graph() {
 		this.vertices = new HashMap<String, List<Vertex>>();
 	}
 	
-	public void addVertex(String ip, List<Vertex> vertex) {
-		this.vertices.put(ip, vertex);
+	public void addVertex(String ip, Vertex vertex) {
+		//this.vertices.put(ip, vertex);
+		if(!vertices.containsKey(ip)){
+			List<Vertex> v1 = new ArrayList<>();
+			v1.add(vertex);
+			vertices.put(ip,v1);	
+		}else{
+			List<Vertex> v = vertices.get(ip);
+			v.add(vertex);
+			vertices.put(ip,v);
+		}
 	}
-	
+	public void printGraph(){
+		Iterator it = vertices.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry pair = (Map.Entry)it.next();
+			String source = (String)pair.getKey();
+			System.out.println(source);
+			List<Vertex> val = (List<Vertex>)pair.getValue();
+			for(Vertex v: val){
+				System.out.println(v.id+" "+v.distance);
+			}
+		}
+	}
 	public List<String> getShortestPath(String start, String finish) {
 		final Map<String, Integer> distances = new HashMap<String, Integer>();
 		final Map<String, Vertex> previous = new HashMap<String, Vertex>();
@@ -27,6 +49,7 @@ class Graph {
 				distances.put(vertex, 0);
 				nodes.add(new Vertex(vertex, 0));
 			} else {
+				
 				distances.put(vertex, Integer.MAX_VALUE);
 				nodes.add(new Vertex(vertex, Integer.MAX_VALUE));
 			}
@@ -35,6 +58,7 @@ class Graph {
 		
 		while (!nodes.isEmpty()) {
 			Vertex smallest = nodes.poll();
+			System.out.println("here: "+smallest.getId());
 			if (smallest.getId().equals(finish)) {
 				final List<String> path = new ArrayList<>();
 				while (previous.get(smallest.getId()) != null) {
@@ -69,8 +93,9 @@ class Graph {
 			}
 		}
 		String x = distances.keySet().toString();
-                System.out.println("hereee");
+                System.out.println("here");
 		return new ArrayList<String>(distances.keySet());
 	}
+
 	
 }

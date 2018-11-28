@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 class Vertex implements Comparable<Vertex> {
 	
-	private String id;
-	private Integer distance;
+	public String id;
+	public Integer distance;
 	
 	public Vertex(String id, Integer distance) {
 		super();
