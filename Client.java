@@ -47,12 +47,12 @@ public class Client extends Thread{
 		os.writeObject(t);
 		os.flush();
 		byte[] buf = outputStream.toByteArray();
-		System.out.println(neighbours.size());
+	
 		for(String node: neighbours){
 
 			DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName(node), 8585);
 			ds.send(dp);
-			System.out.println("Sent to "+node);
+			//System.out.println("Sent to "+node);
 		}
 		}catch(Exception e){
 			System.out.println("Error in sendToNeighbours: "+e.getMessage());
@@ -85,7 +85,7 @@ public class Client extends Thread{
 						if(r.getSource().equals(local)){
 							if(!neighbours.contains(r.getDestination())){
 								neighbours.add(r.getDestination());
-								System.out.println("added");							
+				//				System.out.println("added");							
 							}
 							
 						}
@@ -93,6 +93,8 @@ public class Client extends Thread{
 					if(change){
 						sendToNeighbours();
 					}
+					//deduplicate();
+					System.out.println("Topology Database is:");
 					t.printTopology();
 					
 					
@@ -102,24 +104,48 @@ public class Client extends Thread{
 			}
 
 		}
+		static public boolean hasRow(ArrayList<TopologyRow> temp, TopologyRow r){
+			for(TopologyRow row : temp){
+				if(row.getSource().equals(r.getSource())){
+					if(row.getDestination().equals(r.getDestination())){
+				//		System.out.println("ALREADY PRESENT"); return true;
+					}
+				}
+			}
+			//System.out.println("Will add");
+			return false;
+		}
+		static public void deduplicate(){
+			ArrayList<TopologyRow> new_rows = new ArrayList<>();
+			ArrayList<TopologyRow> original = t.topology;
 
+			for(TopologyRow r: original){
+				if(!hasRow(new_rows, r)){
+					new_rows.add(r);
+				}
+			}
+			System.out.println(new_rows.size());
+			t.setTopology(new_rows);
+			
+		}		
 		
-
-		public boolean updateTopology(Topology temp){
+		public synchronized boolean updateTopology(Topology temp){
 			ArrayList<TopologyRow> temp_rows = temp.topology;
 			ArrayList<TopologyRow> rows = t.topology;
-			boolean change = true;
+			
+			HashSet<TopologyRow> new_rows = new HashSet<>();
+			boolean change = false;
 			for(TopologyRow row: temp_rows){
 				boolean add = true;
-				change = true;
+				
 				for(TopologyRow row1: rows){
 					if((row1.getSource().equals(row.getSource()))&&(row1.getDestination().equals(row.getDestination()))){
 						add = false;
-						change = false;	
+							
 					}
 				}
 				if(add){
-					
+					change = true;
 					rows.add(row);
 				}
 			}
