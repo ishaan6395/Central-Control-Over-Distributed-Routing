@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class TopologyRow {
+public class TopologyRow implements Serializable{
     String source,  destination;
     double cost;
     boolean stateActive;

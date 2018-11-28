@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class LinkState {
+public class LinkState implements Serializable{
     String source;
     boolean state;
 
