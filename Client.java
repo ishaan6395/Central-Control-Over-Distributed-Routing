@@ -8,7 +8,9 @@ public class Client extends Thread{
 	static Topology t;
 	public static void main(String args[]){
 		neighbours = new ArrayList<>();
+		
 		t = new Topology(new ArrayList<TopologyRow>());
+		
 		Sender s = new Sender();
 		s.start();
 		Receiver r = new Receiver();
@@ -96,7 +98,7 @@ public class Client extends Thread{
 					//deduplicate();
 					System.out.println("Topology Database is:");
 					t.printTopology();
-					
+					t.printShortestPath();			
 					
 				}
 			}catch(Exception e){
