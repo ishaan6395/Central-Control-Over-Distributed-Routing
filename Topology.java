@@ -33,6 +33,7 @@ public class Topology implements Serializable {
     public void printShortestPath(){
 	
 	try{
+		
 		File f1 = new File("top.txt");
                 FileWriter fr1 = new FileWriter(f1, false);
 		int len = topology.size();
@@ -64,7 +65,7 @@ public class Topology implements Serializable {
                         String dest = content[1];
                         names.add(dest);
 			int cost = Integer.parseInt(content[2]);
-                        System.out.println(source+" "+dest+" "+cost);
+                       
                         g.addVertex(source, new Vertex(dest,cost));
 			g.addVertex(dest, new Vertex(source,cost));
                         line = br.readLine();
@@ -72,14 +73,19 @@ public class Topology implements Serializable {
 
                 //System.out.println("129.21.22.196".hashCode())
                 //
-		g.printGraph();
-		System.out.println(names.size());
-                List<String> x = g.getShortestPath(names.get(0),names.get(1));
-                System.out.println(names.get(0)+"  "+ names.get(1));
-		Collections.reverse(x);
-                System.out.println(x);
-                g.printGraph();
+	
+		//System.out.println(names.size());
+	
+		String l1 = InetAddress.getLocalHost().toString().split("/")[1];
+		for(String name:names){
+			if(!name.equals(l1)){
+				List<String> x = g.getShortestPath(l1,name);
+				Collections.reverse(x);
+				System.out.println(x);
+			}
 
+		}
+		
 	}catch(Exception e){
 		System.out.println("In Shortest Path function: "+e.getMessage());
 		e.printStackTrace();

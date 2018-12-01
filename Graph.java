@@ -45,7 +45,7 @@ class Graph {
 		PriorityQueue<Vertex> nodes = new PriorityQueue<Vertex>();
 		
 		for(String vertex : vertices.keySet()) {
-			if (vertex == start) {
+			if (vertex.equals(start)) {
 				distances.put(vertex, 0);
 				nodes.add(new Vertex(vertex, 0));
 			} else {
@@ -58,7 +58,7 @@ class Graph {
 		
 		while (!nodes.isEmpty()) {
 			Vertex smallest = nodes.poll();
-			System.out.println("here: "+smallest.getId());
+			//System.out.println("here: "+smallest.getId());
 			if (smallest.getId().equals(finish)) {
 				final List<String> path = new ArrayList<>();
 				while (previous.get(smallest.getId()) != null) {
@@ -82,7 +82,7 @@ class Graph {
 					
 					forloop:
 					for(Vertex n : nodes) {
-						if (n.getId() == neighbor.getId()) {
+						if (n.getId().equals(neighbor.getId())) {
 							nodes.remove(n);
 							n.setDistance(alt);
 							nodes.add(n);
