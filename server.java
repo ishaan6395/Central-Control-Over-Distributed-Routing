@@ -43,7 +43,7 @@ public class server extends Thread{
 			
 			try{
 				DatagramSocket send_socket = new DatagramSocket();
-				DatagramSocket ds = new DatagramSocket(8585);
+				DatagramSocket ds = new DatagramSocket(6789);
 			
 				while(true){
 				
@@ -83,7 +83,7 @@ public class server extends Thread{
 					byte[] buf = outputStream.toByteArray();
 					
 									
-					DatagramPacket dp_send = new DatagramPacket(buf, buf.length, InetAddress.getByName(source), 8585);
+					DatagramPacket dp_send = new DatagramPacket(buf, buf.length, InetAddress.getByName(source), 6790);
 					System.out.println(source);
 					
 					send_socket.send(dp_send);	

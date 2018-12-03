@@ -29,7 +29,7 @@ public class Client extends Thread{
 				os.writeObject(ls);
 				os.flush();
 				byte[] buf = outputStream.toByteArray();
-				DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName("129.21.34.80"),8585);
+				DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName("172.17.0.2"),6789);
 		
 				ds.send(dp);
 				
@@ -52,7 +52,7 @@ public class Client extends Thread{
 	
 		for(String node: neighbours){
 
-			DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName(node), 8585);
+			DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName(node), 6790);
 			ds.send(dp);
 			//System.out.println("Sent to "+node);
 		}
@@ -66,7 +66,7 @@ public class Client extends Thread{
 		public void run(){
 			try{
 			
-				DatagramSocket ds = new DatagramSocket(8585);
+				DatagramSocket ds = new DatagramSocket(6790);
 				
 				while(true){
 					byte[] b = new byte[3000];
