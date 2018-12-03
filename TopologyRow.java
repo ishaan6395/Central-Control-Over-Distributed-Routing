@@ -3,7 +3,7 @@ import java.io.Serializable;
 public class TopologyRow implements Serializable{
     String source,  destination;
     double cost;
-    boolean stateActive;
+    boolean fake;
 
     public void setSource(String source) {
         this.source = source;
@@ -28,22 +28,22 @@ public class TopologyRow implements Serializable{
     public double getCost() {
         return cost;
     }
-    public boolean getStateActive(){
-	return stateActive;
+    public boolean getFake(){
+	return fake;
     }
-    public void setStateActive(boolean stateActive){
-	this.stateActive = stateActive;
+    public void setFake(boolean fake){
+	this.fake = fake;
     }
 
     public TopologyRow(String source, String destination, double cost) {
         this.source = source;
         this.destination = destination;
         this.cost = cost;
-	this.stateActive = false;
+	this.fake = false;
     }
 
     public TopologyRow() {
-	    this.stateActive = false;
+	    this.fake = false;
     }
     
 }

@@ -63,7 +63,7 @@ public class server extends Thread{
 					ArrayList<TopologyRow> rows_to_send = new ArrayList<>();
 					for(TopologyRow row: rows){
 						if(source.equals(row.getSource())){
-							row.setStateActive(state);
+						//	row.setStateActive(state);
 
 						}
 						if(source.equals(row.getSource())){
