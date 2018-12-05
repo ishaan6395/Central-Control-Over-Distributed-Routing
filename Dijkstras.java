@@ -30,8 +30,8 @@ public class Dijkstras {
 			names.add(dest);
 			int cost = Integer.parseInt(content[2]);
 			System.out.println(source+" "+dest+" "+cost);
-			g.addVertex(source, new Vertex(dest,cost));
-			g.addVertex(dest, new Vertex(source,cost));
+			g.addVertex(source, new Vertex(dest,dest,cost));
+			g.addVertex(dest, new Vertex(source,source,cost));
 			line = br.readLine();
 		}
 	

@@ -20,7 +20,7 @@ public class server extends Thread{
 				String source = content[0];
 				String destination = content[1];
 				double cost = Double.parseDouble(content[2]);
-				TopologyRow row = new TopologyRow(source, destination, cost);
+				TopologyRow row = new TopologyRow(source, destination, cost, destination);
 				
 				t.addRow(row);
 				if(!sources.contains(source))

@@ -15,9 +15,17 @@ public class Client extends Thread{
 		s.start();
 		Receiver r = new Receiver();
 		r.start();
-	
+		ControllerThread ct = new ControllerThread();
+		ct.start();
 	}
+	
+	static class ControllerThread extends Thread{
 
+		public void run(){
+			Controller c = new Controller();
+			c.main();
+		}
+	}
 	static class Sender extends Thread{
 		public void run(){
 			try{
