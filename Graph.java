@@ -45,13 +45,14 @@ class Graph {
 		PriorityQueue<Vertex> nodes = new PriorityQueue<Vertex>();
 		
 		for(String vertex : vertices.keySet()) {
-			if (vertex.equals(start)) {
+			if (vertex.equals(start) ) {
 				distances.put(vertex, 0);
 				nodes.add(new Vertex(vertex, vertex,0));
 			} else {
-				
+			//	if(!vertex.contains("Fake")){	
 				distances.put(vertex, Integer.MAX_VALUE);
 				nodes.add(new Vertex(vertex, vertex,Integer.MAX_VALUE));
+			//	}
 			}
 			previous.put(vertex, null);
 		}
@@ -65,7 +66,7 @@ class Graph {
 					path.add(smallest.getId());
 					smallest = previous.get(smallest.getId());
 				}
-                        //        System.out.println(distances.get(finish));
+                                System.out.println(distances.get(finish));
                                 return path;
                                 
 			}

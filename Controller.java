@@ -1,9 +1,11 @@
 import java.io.*;
 import java.util.*;
+import java.net.*;
 
 public class Controller{
 
 	public static HashMap<String,String> map = new HashMap<>();
+	static String k;
 	public static void main(){
 		try{
 			while(true){
@@ -37,68 +39,87 @@ public class Controller{
 			List<String> path2 = new ArrayList<>();
 			String source = req_break[1];
 			String dest = req_break[2];
+			k = dest;
+			//String source = "172.17.0.3";
+			//String dest = "172.17.0.6";
 			String temp_path[] = req_break[3].split(";");
 			for(String node : temp_path){
 				path2.add(node);
 			}
-
+			
 
 
 		        ArrayList<TopologyRow> r1 = removeLink(r, link[0], link[1]); 
-			r1 = removeLink(r1, "E","C");
-			r1 = removeLink(r1,"A","C");
+			
 			Graph g = new Graph();
-                        for(TopologyRow row: r1){
+			
+			Graph augmented = new Graph();
+                        
+			for(TopologyRow row: r1){
+				
+                                	g.addVertex(row.getSource(), new Vertex(row.getDestination(), row.getDestination(),(int)row.getCost()));
 
-                                g.addVertex(row.getSource(), new Vertex(row.getDestination(), row.getDestination(),(int)row.getCost()));
+			}
+			for(TopologyRow row: r1){
+
+                                augmented.addVertex(row.getSource(), new Vertex(row.getDestination(), row.getDestination(),(int)row.getCost()));
                         }
 
                         
-                        
-			List<String> path = g.getShortestPath(source, dest);
-			path.add(source);
+                       	System.out.println(g.getShortestPath(source, dest)); 
+			
+			List<String> path = g.getShortestPath(source, dest );
+			if(!path.get(path.size()-1).equals(source))
+				path.add(source);
 			Collections.reverse(path);
 			System.out.println("The path which will be taken according to Dijkistra on Failure of link "+link[0]+"-"+link[1]+": "+path+"\n");
-
+			
 			//t.printTopology();	
 					
 			//Augmenting the Topology
-			augmentTopology(g, path, path2, source, dest, r1);
+			augmentTopology(g, augmented, path, path2, source, dest, r1);
 			
-
+			
 			//Print path from current node to destintion
                          List<String> p = g.getShortestPath(source, dest);
-			 p.add(source);
+			 
+		 	 if(!path.get(path.size()-1).equals(source))	 
+			 	p.add(source);
                          Collections.reverse(p);
-			//
+			 
+			
 			ArrayList<String> p1 = new ArrayList<>();
 			printPath(g, p, p1, dest);
-			System.out.println("\nThe path which will be chosen by Fibbing Controller: "+p1);
 			
+			System.out.println(source+" Shorest path to 172.17.0.4"+g.getShortestPath(source, "172.17.0.4"));
+			System.out.println("\nThe path which will be chosen by Fibbing Controller: "+p1);
+			printPath(g, p, p1, dest);
+			System.out.println(p1);	
 			//Printing Augmented Topology
 			System.out.println("\nThe augmented Topology is: ");
 			t.setTopology(r1);
 			t.printTopology();
+			printShortestAugmentedPath(g, augmented, t);
 		}catch(Exception e){
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
 	}
 
-	public static void augmentTopology(Graph g, List<String> path, List<String> path2, String source, String dest, ArrayList<TopologyRow> r1){
+	public static void augmentTopology(Graph g, Graph augmented, List<String> path, List<String> path2, String source, String dest, ArrayList<TopologyRow> r1){
 		 for(int idx = 0;idx<path2.size();idx++){
-                                if(!path.get(idx).equals(path2.get(idx))){
+                               // if(!path.get(idx).equals(path2.get(idx))){
 					if(path2.get(idx).equals("*")&&idx==path2.size()-1){
 						
 						break;
 					}else if(path2.get(idx).equals("*")){
 						String fakenode = "Fake"+path2.get(idx-1);
-						g.addVertex(path2.get(idx-1), new Vertex(fakenode, path2.get(idx+1),1));
-						g.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx+1),1));
-						g.addVertex(fakenode, new Vertex(path2.get(idx+1), path2.get(idx+1),1));
-						g.addVertex(path2.get(idx+1), new Vertex(fakenode, path2.get(idx+1),1));
+						augmented.addVertex(path2.get(idx-1), new Vertex(fakenode, path2.get(idx+1),1));
+						augmented.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx+1),1));
+						augmented.addVertex(fakenode, new Vertex(path2.get(idx+1), path2.get(idx+1),1));
+						augmented.addVertex(path2.get(idx+1), new Vertex(fakenode, path2.get(idx+1),1));
 						map.put(fakenode, path2.get(idx+1));
-					}else if(path2.get(idx-1)!="*"){
+					}else if(idx>0){
 
                                         System.out.println("Adding fake on: "+path2.get(idx-1));
                                         System.out.println(path2.get(idx-1)+","+"Fake"+path2.get(idx-1)+",1,"+path2.get(idx));
@@ -123,9 +144,44 @@ public class Controller{
                                         g.addVertex(dest, new Vertex(fakenode, path2.get(idx),1));
 
 					}
-				}            
+				//}            
 		 }
 
+	}
+	public static void printShortestAugmentedPath(Graph g, Graph augmented, Topology t){
+		try{
+			//String local = InetAddress.getLocalHost().toString().split("/")[1];
+			
+			String local = "172.17.0.3";
+			System.out.println("\nThe Routing Table for "+local+" is: \n");
+			ArrayList<TopologyRow> rows = t.topology;
+			ArrayList<String> destinations = new ArrayList<>();
+
+			for(TopologyRow row: rows){
+				if(!row.getSource().equals(local) && !row.getSource().contains("Fake")){
+					if(!(destinations.contains(row.getSource()) ))
+			
+							destinations.add(row.getSource());
+				}
+			}
+			for(String dest: destinations){
+				System.out.println(local+"For destination: "+dest);	
+				List<String> p;
+				if(dest.equals(k))       
+					p= g.getShortestPath(local, dest);
+				else
+					p = augmented.getShortestPath(local, dest);
+				ArrayList<String> p2 = new ArrayList<>();
+				p.add(local);
+				Collections.reverse(p);
+				printPath(g, p, p2, dest);
+				System.out.println("The path to destination :"+dest+" is : "+p2);
+				
+				
+			}
+		}catch(Exception e){
+			System.out.println("Exception in print Shortest Augmented Path: "+e.getMessage());
+		}
 	}
 	public static ArrayList<TopologyRow> removeLink(ArrayList<TopologyRow> r, String source, String dest){
 		ArrayList<TopologyRow> r1 = new ArrayList<>();
@@ -143,6 +199,7 @@ public class Controller{
 	//Constructing the Path	
 	public static void printPath(Graph g, List<String> p, ArrayList<String> p1, String dest){
 		//Printing Path
+		
 		for(String node: p){
 			if(node.contains("Fake")){
 				List<String> path = g.getShortestPath(map.get(node),dest);
