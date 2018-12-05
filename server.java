@@ -29,7 +29,9 @@ public class server extends Thread{
 				
 			}
 			listener l = new listener();
+			System.out.println("Starting");
 			l.start();
+			System.out.println("Started");
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 		}		

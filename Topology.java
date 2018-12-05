@@ -66,8 +66,8 @@ public class Topology implements Serializable {
                         names.add(dest);
 			int cost = Integer.parseInt(content[2]);
                        
-                        g.addVertex(source, new Vertex(dest,cost));
-			g.addVertex(dest, new Vertex(source,cost));
+                        g.addVertex(source, new Vertex(dest,dest,cost));
+			g.addVertex(dest, new Vertex(source,dest,cost));
                         line = br.readLine();
                 }
 

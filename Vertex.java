@@ -7,13 +7,22 @@ import java.util.Map;
 import java.util.PriorityQueue;
 class Vertex implements Comparable<Vertex> {
 	
-	public String id;
+	public String id, correspondsto;
 	public Integer distance;
 	
-	public Vertex(String id, Integer distance) {
+	public Vertex(String id, String correspondsto, Integer distance) {
 		super();
 		this.id = id;
 		this.distance = distance;
+		this.correspondsto = correspondsto;
+	}
+
+	public String getCorrespondsto(){
+		return correspondsto;
+	}
+
+	public void setCorrespondsto(String correspondsto){
+		this.correspondsto = correspondsto;
 	}
 
 	public String getId() {

@@ -1,10 +1,16 @@
 import java.io.Serializable;
 
 public class TopologyRow implements Serializable{
-    String source,  destination;
+    String source,  destination, alias;
     double cost;
     boolean fake;
 
+    public void setAlias(String alias){
+	this.alias = alias;
+    }
+    public String getAlias(){
+	return alias;
+    }
     public void setSource(String source) {
         this.source = source;
     }
@@ -35,10 +41,11 @@ public class TopologyRow implements Serializable{
 	this.fake = fake;
     }
 
-    public TopologyRow(String source, String destination, double cost) {
+    public TopologyRow(String source, String destination, double cost, String alias) {
         this.source = source;
         this.destination = destination;
         this.cost = cost;
+	this.alias = alias;
 	this.fake = false;
     }
 
