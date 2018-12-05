@@ -6,7 +6,9 @@ public class Controller{
 
 	public static HashMap<String,String> map = new HashMap<>();
 	static String k;
-	public static void main(){
+	static ArrayList<String> neighbours;
+	public static void main(ArrayList<String> n){
+		neighbours = n;
 		try{
 			while(true){
 				Scanner s = new Scanner(System.in);
@@ -36,6 +38,8 @@ public class Controller{
 			
 			String req_break[] = requirement.split(",");
 			String link[] = req_break[0].split(":")[1].split(";");
+			String situation = req_break[0].split(":")[0];
+			
 			List<String> path2 = new ArrayList<>();
 			String source = req_break[1];
 			String dest = req_break[2];
@@ -47,7 +51,20 @@ public class Controller{
 				path2.add(node);
 			}
 			
-
+			//If a link is Failed send info to neighbours
+			if(situation.equals("Fail")){
+                                ArrayList<TopologyRow> rows_to_send = new ArrayList<>();
+                                for(TopologyRow row: r){
+                                        if((row.getSource().equals(link[0]) &&row.getDestination().equals(link[1]) ) || 
+					 row.getSource().equals(link[1])&&row.getDestination().equals(link[0]) ){
+						row.setIsActive(false);
+						rows_to_send.add(row);
+                                        }
+                                }
+				Topology to_send = new Topology();
+				to_send.setTopology(rows_to_send);
+				sendToNeighbours(to_send);
+                        }
 
 		        ArrayList<TopologyRow> r1 = removeLink(r, link[0], link[1]); 
 			
@@ -105,6 +122,28 @@ public class Controller{
 			System.out.println(e.getMessage());
 		}
 	}
+
+	static public void sendToNeighbours(Topology t){
+
+                try{
+                DatagramSocket ds = new DatagramSocket();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ObjectOutputStream os = new ObjectOutputStream(outputStream);
+                os.writeObject(t);
+                os.flush();
+                byte[] buf = outputStream.toByteArray();
+
+                for(String node: neighbours){
+
+                        DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName(node), 6790);
+                        ds.send(dp);
+                        //System.out.println("Sent to "+node);
+                }
+                }catch(Exception e){
+                        System.out.println("Error in sendToNeighbours: "+e.getMessage());
+                }
+        }
+
 
 	public static void augmentTopology(Graph g, Graph augmented, List<String> path, List<String> path2, String source, String dest, ArrayList<TopologyRow> r1){
 		 for(int idx = 0;idx<path2.size();idx++){

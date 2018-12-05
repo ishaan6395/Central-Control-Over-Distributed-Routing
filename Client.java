@@ -23,7 +23,7 @@ public class Client extends Thread{
 
 		public void run(){
 			Controller c = new Controller();
-			c.main();
+			c.main(neighbours);
 		}
 	}
 	static class Sender extends Thread{
@@ -90,7 +90,7 @@ public class Client extends Thread{
 					boolean change = updateTopology(temp);
 					//t.printTopology();
 					rows = t.getTopology();
-					
+						
 					for(TopologyRow r: rows){
 						if(r.getSource().equals(local)){
 							if(!neighbours.contains(r.getDestination())){
@@ -149,7 +149,8 @@ public class Client extends Thread{
 				boolean add = true;
 				
 				for(TopologyRow row1: rows){
-					if((row1.getSource().equals(row.getSource()))&&(row1.getDestination().equals(row.getDestination()))){
+					if((row1.getSource().equals(row.getSource()))&&(row1.getDestination().equals(row.getDestination())&&
+								!row1.getIsActive())){
 						add = false;
 							
 					}

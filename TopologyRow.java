@@ -3,7 +3,7 @@ import java.io.Serializable;
 public class TopologyRow implements Serializable{
     String source,  destination, alias;
     double cost;
-    boolean fake;
+    boolean isActive;
 
     public void setAlias(String alias){
 	this.alias = alias;
@@ -34,11 +34,11 @@ public class TopologyRow implements Serializable{
     public double getCost() {
         return cost;
     }
-    public boolean getFake(){
-	return fake;
+    public boolean getIsActive(){
+	return isActive;
     }
-    public void setFake(boolean fake){
-	this.fake = fake;
+    public void setIsActive(boolean isActive){
+	this.isActive = isActive;
     }
 
     public TopologyRow(String source, String destination, double cost, String alias) {
@@ -46,11 +46,11 @@ public class TopologyRow implements Serializable{
         this.destination = destination;
         this.cost = cost;
 	this.alias = alias;
-	this.fake = false;
+	this.isActive = true;
     }
 
     public TopologyRow() {
-	    this.fake = false;
+	    this.isActive = true;
     }
     
 }
