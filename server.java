@@ -42,19 +42,17 @@ public class server extends Thread{
 	static class listener extends Thread{
 	
 		public void run(){
-			System.out.println("starting listener");
+			
 			try{
 				DatagramSocket send_socket = new DatagramSocket();
 				DatagramSocket ds = new DatagramSocket(6789);
 			
 				while(true){
-					
+				
 					// Receive packets
 					byte[] b = new byte[3000];
 	                        	DatagramPacket dp = new DatagramPacket(b, b.length);
-					
 					ds.receive(dp);
-					System.out.println("here");
 					byte[] data = dp.getData();
 					ByteArrayInputStream in = new ByteArrayInputStream(data);
 					ObjectInputStream is = new ObjectInputStream(in);

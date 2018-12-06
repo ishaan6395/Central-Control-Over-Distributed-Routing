@@ -6,9 +6,7 @@ public class Controller{
 
 	public static HashMap<String,String> map = new HashMap<>();
 	static String k;
-	static ArrayList<String> neighbours;
-	public ArrayList<String> main(ArrayList<String> n){
-		neighbours = n;
+	public static void main(){
 		try{
 			while(true){
 				Scanner s = new Scanner(System.in);
@@ -38,8 +36,6 @@ public class Controller{
 			
 			String req_break[] = requirement.split(",");
 			String link[] = req_break[0].split(":")[1].split(";");
-			String situation = req_break[0].split(":")[0];
-			
 			List<String> path2 = new ArrayList<>();
 			String source = req_break[1];
 			String dest = req_break[2];
@@ -51,21 +47,7 @@ public class Controller{
 				path2.add(node);
 			}
 			
-			//If a link is Failed send info to neighbours
-			if(situation.equals("Fail")){
-                                ArrayList<TopologyRow> rows_to_send = new ArrayList<>();
-                                for(TopologyRow row: r){
-                                        if((row.getSource().equals(link[0]) &&row.getDestination().equals(link[1]) ) || 
-					 row.getSource().equals(link[1])&&row.getDestination().equals(link[0]) ){
-						row.setIsActive(false);
-						rows_to_send.add(row);
-                                        }
-                                }
-				Topology to_send = new Topology();
-				to_send.setTopology(rows_to_send);
-				sendToNeighbours(to_send);
-				
-                        }
+
 
 		        ArrayList<TopologyRow> r1 = removeLink(r, link[0], link[1]); 
 			
@@ -118,37 +100,11 @@ public class Controller{
 			t.setTopology(r1);
 			t.printTopology();
 			printShortestAugmentedPath(g, augmented, t);
-			
 		}catch(Exception e){
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
-		return neighbours;
-	
 	}
-	
-
-	static public void sendToNeighbours(Topology t){
-
-                try{
-                DatagramSocket ds = new DatagramSocket();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ObjectOutputStream os = new ObjectOutputStream(outputStream);
-                os.writeObject(t);
-                os.flush();
-                byte[] buf = outputStream.toByteArray();
-
-                for(String node: neighbours){
-
-                        DatagramPacket dp = new DatagramPacket(buf, buf.length, InetAddress.getByName(node), 6790);
-                        ds.send(dp);
-                        //System.out.println("Sent to "+node);
-                }
-                }catch(Exception e){
-                        System.out.println("Error in sendToNeighbours: "+e.getMessage());
-                }
-        }
-
 
 	public static void augmentTopology(Graph g, Graph augmented, List<String> path, List<String> path2, String source, String dest, ArrayList<TopologyRow> r1){
 		 for(int idx = 0;idx<path2.size();idx++){
@@ -182,10 +138,10 @@ public class Controller{
                                         r1.add(row4);
                                         map.put(fakenode, path2.get(idx));
 
-                                        augmented.addVertex(path2.get(idx-1),new Vertex(fakenode,path2.get(idx),1));
-                                        augmented.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx),1));
-                                        augmented.addVertex(fakenode, new Vertex(dest,path2.get(idx) ,1));
-                                        augmented.addVertex(dest, new Vertex(fakenode, path2.get(idx),1));
+                                        g.addVertex(path2.get(idx-1),new Vertex(fakenode,path2.get(idx),1));
+                                        g.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx),1));
+                                        g.addVertex(fakenode, new Vertex(dest,path2.get(idx) ,1));
+                                        g.addVertex(dest, new Vertex(fakenode, path2.get(idx),1));
 
 					}
 				//}            
