@@ -63,7 +63,8 @@ public class Topology implements Serializable {
 			
                 //      System.out.println(source.hashCode());
                         String dest = content[1];
-                        names.add(dest);
+                        if(!names.contains(dest))
+				names.add(dest);
 			int cost = Integer.parseInt(content[2]);
                        
                         g.addVertex(source, new Vertex(dest,dest,cost));

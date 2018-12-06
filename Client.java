@@ -23,7 +23,7 @@ public class Client extends Thread{
 
 		public void run(){
 			Controller c = new Controller();
-			c.main(neighbours);
+			neighbours = c.main(neighbours);
 		}
 	}
 	static class Sender extends Thread{
@@ -110,6 +110,7 @@ public class Client extends Thread{
 					
 				}
 			}catch(Exception e){
+				e.printStackTrace();
 				System.out.println("Receiver in client: "+e.getMessage());
 			}
 
@@ -149,10 +150,16 @@ public class Client extends Thread{
 				boolean add = true;
 				
 				for(TopologyRow row1: rows){
-					if((row1.getSource().equals(row.getSource()))&&(row1.getDestination().equals(row.getDestination())&&
-								!row1.getIsActive())){
+					if((row1.getSource().equals(row.getSource()))&&(row1.getDestination().equals(row.getDestination()))){
 						add = false;
-							
+						//if(neighbours.contains(row.getDestination()))
+						//	neighbours.remove(row.getDestination());
+						//if(neighbours.contains(row.getSource()))
+						//	neighbours.remove(row.getSource());
+										
+					}
+					if(!row1.getIsActive()){
+						add = true;
 					}
 				}
 				if(add){

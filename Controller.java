@@ -7,7 +7,7 @@ public class Controller{
 	public static HashMap<String,String> map = new HashMap<>();
 	static String k;
 	static ArrayList<String> neighbours;
-	public static void main(ArrayList<String> n){
+	public ArrayList<String> main(ArrayList<String> n){
 		neighbours = n;
 		try{
 			while(true){
@@ -64,6 +64,7 @@ public class Controller{
 				Topology to_send = new Topology();
 				to_send.setTopology(rows_to_send);
 				sendToNeighbours(to_send);
+				
                         }
 
 		        ArrayList<TopologyRow> r1 = removeLink(r, link[0], link[1]); 
@@ -117,11 +118,15 @@ public class Controller{
 			t.setTopology(r1);
 			t.printTopology();
 			printShortestAugmentedPath(g, augmented, t);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
+		return neighbours;
+	
 	}
+	
 
 	static public void sendToNeighbours(Topology t){
 
@@ -177,10 +182,10 @@ public class Controller{
                                         r1.add(row4);
                                         map.put(fakenode, path2.get(idx));
 
-                                        g.addVertex(path2.get(idx-1),new Vertex(fakenode,path2.get(idx),1));
-                                        g.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx),1));
-                                        g.addVertex(fakenode, new Vertex(dest,path2.get(idx) ,1));
-                                        g.addVertex(dest, new Vertex(fakenode, path2.get(idx),1));
+                                        augmented.addVertex(path2.get(idx-1),new Vertex(fakenode,path2.get(idx),1));
+                                        augmented.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx),1));
+                                        augmented.addVertex(fakenode, new Vertex(dest,path2.get(idx) ,1));
+                                        augmented.addVertex(dest, new Vertex(fakenode, path2.get(idx),1));
 
 					}
 				//}            
