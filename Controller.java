@@ -48,8 +48,8 @@ public class Controller{
 			}
 			
 
-
-		        ArrayList<TopologyRow> r1 = removeLink(r, link[0], link[1]); 
+		//	if(req_break[0].split(":")[0].equals("Fail"))
+		        	ArrayList<TopologyRow> r1 = removeLink(r, link[0], link[1]); 
 			
 			Graph g = new Graph();
 			
@@ -72,7 +72,7 @@ public class Controller{
 			if(!path.get(path.size()-1).equals(source))
 				path.add(source);
 			Collections.reverse(path);
-			System.out.println("The path which will be taken according to Dijkistra on Failure of link "+link[0]+"-"+link[1]+": "+path+"\n");
+			System.out.println("The path which will be taken according to Dijkistra on change "+link[0]+"-"+link[1]+": "+path+"\n");
 			
 			//t.printTopology();	
 					
@@ -91,7 +91,7 @@ public class Controller{
 			ArrayList<String> p1 = new ArrayList<>();
 			printPath(g, p, p1, dest);
 			
-			System.out.println(source+" Shorest path to 172.17.0.4"+g.getShortestPath(source, "172.17.0.4"));
+			//System.out.println(source+" Shorest path to 172.17.0.4"+g.getShortestPath(source, "172.17.0.4"));
 			System.out.println("\nThe path which will be chosen by Fibbing Controller: "+p1);
 			printPath(g, p, p1, dest);
 			System.out.println(p1);	
@@ -150,9 +150,9 @@ public class Controller{
 	}
 	public static void printShortestAugmentedPath(Graph g, Graph augmented, Topology t){
 		try{
-			//String local = InetAddress.getLocalHost().toString().split("/")[1];
+			String local = InetAddress.getLocalHost().toString().split("/")[1];
 			
-			String local = "172.17.0.3";
+			//String local = "172.17.0.3";
 			System.out.println("\nThe Routing Table for "+local+" is: \n");
 			ArrayList<TopologyRow> rows = t.topology;
 			ArrayList<String> destinations = new ArrayList<>();
