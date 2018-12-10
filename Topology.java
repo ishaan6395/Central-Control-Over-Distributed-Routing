@@ -1,3 +1,16 @@
+/**
+ * Topology.java
+ */
+
+/**
+ * Class having all attributes and methods related to a Topology database
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
+
+
 import java.io.Serializable;
 import java.util.*;
 import java.net.*;
@@ -30,6 +43,11 @@ public class Topology implements Serializable {
 	}
     }
 
+    /**
+     * Function to print the shortest path
+     * @param none
+     * @return void
+     */
     public void printShortestPath(){
 	
 	try{
@@ -72,11 +90,7 @@ public class Topology implements Serializable {
                         line = br.readLine();
                 }
 
-                //System.out.println("129.21.22.196".hashCode())
-                //
-	
-		//System.out.println(names.size());
-	
+               
 		String l1 = InetAddress.getLocalHost().toString().split("/")[1];
 		for(String name:names){
 			if(!name.equals(l1)){

@@ -1,3 +1,14 @@
+/**
+ * Client.java
+ */
+
+/**
+ * Program to simluate a router connected is OSPF network topology
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
 import java.util.*;
 import java.net.*;
 import java.io.*;
@@ -19,14 +30,32 @@ public class Client extends Thread{
 		ct.start();
 	}
 	
+	/**
+	 * Class to start the Fibbing Controller
+	 */	
 	static class ControllerThread extends Thread{
-
+		
+		/**
+		 * Function to start the fibbing controller
+		 * @param none
+		 * @return void
+		 */
 		public void run(){
 			Controller c = new Controller();
 			c.main();
 		}
 	}
+
+	/**
+	 * Class to Connect to the server to get information about the neighbours
+	 */
 	static class Sender extends Thread{
+
+		/**
+		 * This function connects to the server and gets information regarding the reachability to it's neighbours
+		 * @param none
+		 * @return void
+		 */
 		public void run(){
 			try{
 
@@ -48,9 +77,15 @@ public class Client extends Thread{
 		}
 	}
 
+	/**
+	 * This function performs Link State Advertisments by sending information to it's neighbours
+	 * @param none
+	 * @return void
+	 */
 	static public void sendToNeighbours(){
 
 		try{                
+
 		DatagramSocket ds = new DatagramSocket();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		ObjectOutputStream os = new ObjectOutputStream(outputStream);
@@ -69,10 +104,17 @@ public class Client extends Thread{
 		}
         }
 
+	
 	static class Receiver extends Thread{
 		
+		/**
+		 * This function accepts information from the neighbours and detects if there is a change in the network topology to update it's link state database
+		 * @param none
+		 * @return void
+		 */
 		public void run(){
 			try{
+
 			
 				DatagramSocket ds = new DatagramSocket(6790);
 				
@@ -87,8 +129,10 @@ public class Client extends Thread{
 					
 					ArrayList<TopologyRow> rows = t.getTopology();
 					String local = InetAddress.getLocalHost().toString().split("/")[1];
+					
+					// Check if there is a change in the network topology or not
 					boolean change = updateTopology(temp);
-					//t.printTopology();
+					
 					rows = t.getTopology();
 					
 					for(TopologyRow r: rows){
@@ -100,6 +144,8 @@ public class Client extends Thread{
 							
 						}
 					}
+
+					// If a change is detected perform Link State Advertisements
 					if(change){
 						sendToNeighbours();
 					}
@@ -114,6 +160,12 @@ public class Client extends Thread{
 			}
 
 		}
+
+		/**
+		 * Function to check if row is present in the local topology database or not
+		 * @param Arraylist<TopologyRow> and TopologyRow
+		 * @return boolean: to see if the row is present or not in local topology database
+		 */
 		static public boolean hasRow(ArrayList<TopologyRow> temp, TopologyRow r){
 			for(TopologyRow row : temp){
 				if(row.getSource().equals(r.getSource())){
@@ -122,9 +174,15 @@ public class Client extends Thread{
 					}
 				}
 			}
-			//System.out.println("Will add");
+		
 			return false;
 		}
+
+		/**
+		 * Function to deduplicate records
+		 * @param none
+		 * @return void
+		 */
 		static public void deduplicate(){
 			ArrayList<TopologyRow> new_rows = new ArrayList<>();
 			ArrayList<TopologyRow> original = t.topology;
@@ -139,6 +197,11 @@ public class Client extends Thread{
 			
 		}		
 		
+		/**
+		 * Function to update the topology and return if there was some change
+		 * @param Topology
+		 * @return boolean: to see if there was a change or not
+		 */
 		public synchronized boolean updateTopology(Topology temp){
 			ArrayList<TopologyRow> temp_rows = temp.topology;
 			ArrayList<TopologyRow> rows = t.topology;

@@ -1,3 +1,16 @@
+/**
+ * 
+ * server.java 
+ */
+/**
+ *
+ * Program to initialize topology of every router
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
+// Importing packages
 import java.util.*;
 import java.net.*;
 import java.io.*;
@@ -10,6 +23,7 @@ public class server extends Thread{
 		t = new Topology();
 		sources = new ArrayList<>();
 		try{
+			//Read the topology from text file
 			File f = new File("topology.txt");
 	                FileReader fr = new FileReader(f);
         	        BufferedReader br = new BufferedReader(fr);
@@ -38,9 +52,17 @@ public class server extends Thread{
 	}
 
 	
+	/**
+	 * Class to listen all incoming routers and send them their all topologies
+	 */
 
 	static class listener extends Thread{
-	
+		
+		/**
+		 * Function to initialize the topology of incoming routers
+		 * @param none
+		 * @return void
+		 */
 		public void run(){
 			
 			try{
@@ -63,6 +85,8 @@ public class server extends Thread{
 					System.out.println(source+" "+state);				
 					ArrayList<TopologyRow> rows = t.getTopology();
 					ArrayList<TopologyRow> rows_to_send = new ArrayList<>();
+
+					// Getting the information of neighbours for connecting router
 					for(TopologyRow row: rows){
 						if(source.equals(row.getSource())){
 						//	row.setStateActive(state);
@@ -75,7 +99,8 @@ public class server extends Thread{
 
 					Topology topology_to_send = new Topology(rows_to_send);
 					t.setTopology(rows);
-					// BroadCast Topology
+					
+					// Send information of neighbours to connecting routers
 					
 					System.out.println("Broadcasting");
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -84,7 +109,7 @@ public class server extends Thread{
 					os.flush();
 					byte[] buf = outputStream.toByteArray();
 					
-									
+					//Send the packet to the router		
 					DatagramPacket dp_send = new DatagramPacket(buf, buf.length, InetAddress.getByName(source), 6790);
 					System.out.println(source);
 					

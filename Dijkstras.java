@@ -1,3 +1,14 @@
+/**
+ * Dijkstras.java
+ */
+
+/**
+ * Program to test the dijkistras algorithm
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

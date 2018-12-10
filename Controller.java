@@ -1,3 +1,15 @@
+/*
+ * Controller.java
+ */
+
+/**
+ * Program to augment topology based on forwarding requirements and Simple Algorithm
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
+
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -8,6 +20,7 @@ public class Controller{
 	static String k;
 	public static void main(){
 		try{
+			//Wait for the user to start the simulation
 			while(true){
 				Scanner s = new Scanner(System.in);
 				String command = s.nextLine();
@@ -18,6 +31,8 @@ public class Controller{
 					System.out.println("To start simulation please enter \"start simulation\"");
 				}
 			}
+
+			// Read the requirements from the file
 			BufferedReader br1 = new BufferedReader(new FileReader(new File("requirements.txt")));
 			String requirement = br1.readLine();
 			BufferedReader br = new BufferedReader(new FileReader(new File("topology.txt")));
@@ -34,14 +49,15 @@ public class Controller{
 			}
 			t.setTopology(r);
 			
+			//Break the forwarding requirements into components
 			String req_break[] = requirement.split(",");
 			String link[] = req_break[0].split(":")[1].split(";");
 			List<String> path2 = new ArrayList<>();
 			String source = req_break[1];
 			String dest = req_break[2];
 			k = dest;
-			//String source = "172.17.0.3";
-			//String dest = "172.17.0.6";
+			
+
 			String temp_path[] = req_break[3].split(";");
 			for(String node : temp_path){
 				path2.add(node);
@@ -72,9 +88,11 @@ public class Controller{
 			if(!path.get(path.size()-1).equals(source))
 				path.add(source);
 			Collections.reverse(path);
+			
+			//Print the path based on Dijkstra's Algorithm
 			System.out.println("The path which will be taken according to Dijkistra on change "+link[0]+"-"+link[1]+": "+path+"\n");
 			
-			//t.printTopology();	
+			
 					
 			//Augmenting the Topology
 			augmentTopology(g, augmented, path, path2, source, dest, r1);
@@ -105,9 +123,16 @@ public class Controller{
 			System.out.println(e.getMessage());
 		}
 	}
-
+	
+	/**
+	 * Function to augment the topology based on the forwarding requirements
+	 * @param Graph, Augmented Graph, Path, Required Path, Source, Destination and TopologyRows
+	 * @return void
+	 */
 	public static void augmentTopology(Graph g, Graph augmented, List<String> path, List<String> path2, String source, String dest, ArrayList<TopologyRow> r1){
-		 for(int idx = 0;idx<path2.size();idx++){
+		 
+		//Compare both the paths index by index and add fake nodes accordingly
+		for(int idx = 0;idx<path2.size();idx++){
                                // if(!path.get(idx).equals(path2.get(idx))){
 					if(path2.get(idx).equals("*")&&idx==path2.size()-1){
 						
@@ -138,6 +163,7 @@ public class Controller{
                                         r1.add(row4);
                                         map.put(fakenode, path2.get(idx));
 
+					// Add fake nodes in the topology
                                         g.addVertex(path2.get(idx-1),new Vertex(fakenode,path2.get(idx),1));
                                         g.addVertex(fakenode, new Vertex(path2.get(idx-1), path2.get(idx),1));
                                         g.addVertex(fakenode, new Vertex(dest,path2.get(idx) ,1));
@@ -148,15 +174,23 @@ public class Controller{
 		 }
 
 	}
+
+	/**
+	 * Function to print the Routing Table based on Augmented Topology
+	 * @param Graph, Augmented Graph and Topology
+	 * @return void
+	 */
 	public static void printShortestAugmentedPath(Graph g, Graph augmented, Topology t){
 		try{
+			//Getting the local host
 			String local = InetAddress.getLocalHost().toString().split("/")[1];
 			
-			//String local = "172.17.0.3";
+		
 			System.out.println("\nThe Routing Table for "+local+" is: \n");
 			ArrayList<TopologyRow> rows = t.topology;
 			ArrayList<String> destinations = new ArrayList<>();
 
+			// Getting all the reachable destinations
 			for(TopologyRow row: rows){
 				if(!row.getSource().equals(local) && !row.getSource().contains("Fake")){
 					if(!(destinations.contains(row.getSource()) ))
@@ -164,6 +198,8 @@ public class Controller{
 							destinations.add(row.getSource());
 				}
 			}
+
+			// Printing the path
 			for(String dest: destinations){
 				System.out.println(local+"For destination: "+dest);	
 				List<String> p;
@@ -174,6 +210,8 @@ public class Controller{
 				ArrayList<String> p2 = new ArrayList<>();
 				p.add(local);
 				Collections.reverse(p);
+
+				//Resolving the path if there is a fake node present
 				printPath(g, p, p2, dest);
 				System.out.println("The path to destination :"+dest+" is : "+p2);
 				
@@ -183,8 +221,16 @@ public class Controller{
 			System.out.println("Exception in print Shortest Augmented Path: "+e.getMessage());
 		}
 	}
+
+	/**
+	 * Function to remove a link based on a failure of a link
+	 * @param TopologyRows, Source and Destination
+	 * @void TopologyRows: After removing a link
+	 */
 	public static ArrayList<TopologyRow> removeLink(ArrayList<TopologyRow> r, String source, String dest){
 		ArrayList<TopologyRow> r1 = new ArrayList<>();
+
+
                 for(TopologyRow row: r){
 	                if(!((row.getSource().equals(source)&&row.getDestination().equals(dest) ||
                                            (row.getSource().equals(dest)&&row.getDestination().equals(source) )))) 
@@ -196,13 +242,19 @@ public class Controller{
 		return r1;
         	}                
 	
-	//Constructing the Path	
+	/**
+	 * This function acts as a path resolver, resolving fake nodes in real nodes recursively
+	 * @param Graph, Path, Path to be contructed and destination
+	 * @return void
+	 * 
+	 */
 	public static void printPath(Graph g, List<String> p, ArrayList<String> p1, String dest){
 		//Printing Path
 		
 		for(String node: p){
 			if(node.contains("Fake")){
 				List<String> path = g.getShortestPath(map.get(node),dest);
+				// Recursively resolve fakenodes and add nodes in path
 				path.add(map.get(node));
 				Collections.reverse(path);
 				printPath(g, path, p1, dest);

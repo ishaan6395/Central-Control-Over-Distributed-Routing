@@ -1,3 +1,16 @@
+/**
+ * TopologyRow.java
+ */
+
+/**
+ * Class having all necessary information related to a TopologyRow in a Topology
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
+
+
 import java.io.Serializable;
 
 public class TopologyRow implements Serializable{

@@ -1,3 +1,15 @@
+/**
+ * Vertex.java
+ */
+
+/**
+ * Program having all the attributes and methods of a Vertex of a Graph
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

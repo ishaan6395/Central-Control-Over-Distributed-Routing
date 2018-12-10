@@ -1,3 +1,15 @@
+/**
+ * Graph.java
+ */
+
+/**
+ * Program to build a graph and compute shortest path between two nodes
+ * @author Ishaan Thakker
+ * @author Amol Gaikwad
+ * @author Neel Desai
+ */
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +39,12 @@ class Graph {
 			vertices.put(ip,v);
 		}
 	}
+
+	/**
+	 * Function to print the vertex with their neighbours
+	 * @param none
+	 * @return void
+	 */
 	public void printGraph(){
 		Iterator it = vertices.entrySet().iterator();
 		while(it.hasNext()){
@@ -39,6 +57,12 @@ class Graph {
 			}
 		}
 	}
+
+	/**
+	 * Function to get the shortest path from source to destination
+	 * @param String start and String end
+	 * @return Arraylist of the path
+	 */
 	public List<String> getShortestPath(String start, String finish) {
 		final Map<String, Integer> distances = new HashMap<String, Integer>();
 		final Map<String, Vertex> previous = new HashMap<String, Vertex>();
